@@ -1,2 +1,2 @@
 # Homework \#7
-Solution for homeworks \# 7
+Solution for homework \#7

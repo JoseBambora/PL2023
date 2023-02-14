@@ -1,2 +1,2 @@
 # Homework \#6
-Solution for homeworks \# 6
+Solution for homework \#6
