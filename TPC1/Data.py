@@ -63,7 +63,7 @@ class Data:
             res[t] = 0
             for k in range(0,10):
                 aux[i+k] = t
-            i +=9
+            i +=10
         for entry in self.data:
             t = aux[entry.cholesterol]
             res[t] +=1
