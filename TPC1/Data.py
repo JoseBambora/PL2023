@@ -9,7 +9,7 @@ class Data:
     def add(self, entry):
         self.patients.__add__(entry)
     def readFile(self, filename):
-        file = open(filename,"r")
+        file = open(filename,"r",encoding="utf8")
         line = file.readline()
         self.header = line.replace('\n','').split(',')
         while line:
