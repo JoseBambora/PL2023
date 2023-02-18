@@ -10,14 +10,14 @@ def graphic(dist,xstr,ystr,title,tuple):
     display = [t[0] for t in dist.values()]
     plt.barh(x_coords,display,color=['red','black'], height=1.0)
     if tuple:
-        xtick_labels = [f"{i[0]}-{i[1]}" for i in dist.keys()]
+        xtick_labels = [f"[{t[0]}-{t[1]}]" for t in dist.keys()]
         plt.yticks(x_coords, xtick_labels)
     plt.xlabel(xstr)
     plt.ylabel(ystr)
     plt.title(title)
     plt.show()
 
-def print_dist(xstr,ystr,dist):
+def print_dist(xstr,ystr,dist, tuple):
     x1 = len(xstr)
     x2 = len(ystr)
     x3 = len('Probabilidade')
@@ -30,7 +30,10 @@ def print_dist(xstr,ystr,dist):
     print(h)
     print(sep)
     for t in dist.items():
-        s1 = str(t[0])
+        if(tuple):
+            s1 = str(f'[{t[0][0]}-{t[0][1]}]')
+        else:
+            s1 = str(t[0])
         s2 = str(t[1][0])
         s3 = str(round(t[1][1],3)*100)
         p1 = ' ' * (x1-len(s1))
@@ -50,7 +53,7 @@ def show_dist(dist,xstr,ystr,title,tuple):
             option = int(op)
             if option > 0 and option < 3:
                 if option == 1: graphic(dist,xstr,ystr,title,tuple)
-                else: print_dist(xstr,ystr,dist)
+                else: print_dist(xstr,ystr,dist,tuple)
             else:
                 print('Opção Inválida')
         else:
