@@ -6,6 +6,7 @@ class Data:
         self.data = []
         self.maxs = {}
         self.mins = {}
+        self.count = 0
     def add(self, entry):
         self.patients.__add__(entry)
     def readFile(self, filename):
@@ -27,6 +28,7 @@ class Data:
         self.mins['age'] = min(self.data,key=lambda e: e.age).age
         self.maxs['col'] =  max(self.data,key=lambda e: e.cholesterol).cholesterol
         self.mins['col'] =  min(self.data,key=lambda e: e.cholesterol).cholesterol
+        self.count = len(self.data)
 
     def distr_sex(self):
         res = {
@@ -34,7 +36,10 @@ class Data:
             'F': 0
         }
         for entry in self.data:
-            res[entry.sex]+=1
+            if(entry.hasDisease == 1):
+                res[entry.sex]+=1
+        res['M'] = (res['M'],res['M']/self.count)
+        res['F'] = (res['F'],res['F']/self.count)
         return res
 
     def distr_esceta(self):
@@ -50,7 +55,11 @@ class Data:
             i +=5
         for entry in self.data:
             t = aux[entry.age]
-            res[t] +=1
+            if(entry.hasDisease == 1):
+                res[t] +=1
+        for key in res.keys():
+            resu = res[key]
+            res[key] = (resu,resu/self.count)
         return res
 
     def distr_collev(self):
@@ -66,7 +75,11 @@ class Data:
             i +=10
         for entry in self.data:
             t = aux[entry.cholesterol]
-            res[t] +=1
+            if(entry.hasDisease == 1):
+                res[t] +=1
+        for key in res.keys():
+            resu = res[key]
+            res[key] = (resu,resu/self.count)
         return res
 
     def __str__(self):
@@ -92,10 +105,3 @@ class Data:
             res += '\n'
             index += 1
         return res + auxres
-
-    def apresenta_tabela(self):
-        return str
-
-
-
-

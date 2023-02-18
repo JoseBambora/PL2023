@@ -7,7 +7,8 @@ def graphic(dist,xstr,ystr,title,tuple):
     x_coords = [str(key) for key in dist.keys()]
     if tuple:
      x_coords = [i for i in range(len( dist.keys()))]
-    plt.barh(x_coords,dist.values(),color=['red','black'], height=1.0)
+    display = [t[0] for t in dist.values()]
+    plt.barh(x_coords,display,color=['red','black'], height=1.0)
     if tuple:
         xtick_labels = [f"{i[0]}-{i[1]}" for i in dist.keys()]
         plt.yticks(x_coords, xtick_labels)
@@ -16,9 +17,27 @@ def graphic(dist,xstr,ystr,title,tuple):
     plt.title(title)
     plt.show()
 
-def print_dist(dist):
+def print_dist(xstr,ystr,dist):
+    x1 = len(xstr)
+    x2 = len(ystr)
+    x3 = len('Probabilidade')
+    h = f'| {xstr} | {ystr} | Probabilidade |'
+    l = len(h)
+    sep = '+'
+    sep += '-' * (l-2)
+    sep += '+'
+    print(sep)
+    print(h)
+    print(sep)
     for t in dist.items():
-        print(str(t[0]) + ": " + str(t[1]))
+        s1 = str(t[0])
+        s2 = str(t[1][0])
+        s3 = str(round(t[1][1],3)*100)
+        p1 = ' ' * (x1-len(s1))
+        p2 = ' ' * (x2-len(s2))
+        p3 = ' ' * (x3-len(s3)-1)
+        print(f"| {s1} {p1}| {s2} {p2}| {s3}% {p3}|")
+    print(sep)
 
 def show_dist(dist,xstr,ystr,title,tuple):
     print('Qual a opção?')
@@ -31,7 +50,7 @@ def show_dist(dist,xstr,ystr,title,tuple):
             option = int(op)
             if option > 0 and option < 3:
                 if option == 1: graphic(dist,xstr,ystr,title,tuple)
-                else: print_dist(dist)
+                else: print_dist(xstr,ystr,dist)
             else:
                 print('Opção Inválida')
         else:
