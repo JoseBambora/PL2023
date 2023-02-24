@@ -1,8 +1,10 @@
 from functools import reduce
 
-# É assumido que a sequência começa em modo on
+# É assumido que a sequência começa em modo on.
 # Caracteres que não sejam digitos e =, podem ser usados para separar números, mas tirando isso
 # são ignorados.
+# No final da leitura, é apresentado o resultado final, independentemente de ser fornecido
+# um '=' como último caracter.
 
 def fun(str):
     res = []
