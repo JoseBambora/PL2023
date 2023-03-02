@@ -8,21 +8,26 @@ def load_data(data):
     file = open('processos.txt','r')
     lines = file.readlines()
     file.close()
-    exp1 = r"(\d+)::(\d{4,4}-\d{2,2}-\d{2,2})::"
-    exp2 = r"([A-Za-z][A-Za-z\b\s]{5,})(,[A-Za-z][A-Za-z\b\s]{5,}\. )?(Proc.[\d]+)?[:|.]"
-    regexp1 = re.compile(exp1)
-    regexp2 = re.compile(exp2)
-    ids = set()
+    exp = r"(\d+)::(\d{4,4}-\d{2,2}-\d{2,2})::([A-Za-z\b\s]*)::([A-Za-z\b\s]*)::([A-Za-z\b\s]*)::([^::]*)::"
+    regexp = re.compile(exp)
     for linha in lines:
-        num_data = regexp1.search(linha)
-        nomes = regexp2.findall(linha)
-        nomes = list(map(lambda tup: (tup[0],tup[1][1:-2],tup[2]),nomes))
-        if num_data and len(nomes) > 0:
-            num = int(num_data.group(1))
-            if not num in ids:
-                date = num_data.group(2)
-                ids.add(num)
-                data.append((num,date,nomes))
+        resultreg = regexp.match(linha)
+        if resultreg:
+            pasta = int(resultreg.group(1))
+            date = resultreg.group(2)
+            nome = resultreg.group(3)
+            pai = resultreg.group(4)
+            mae = resultreg.group(5)
+            obs = resultreg.group(6)
+            add = {
+                'pasta':pasta,
+                'data':date,
+                'nome':nome,
+                'pai':pai,
+                'mae':mae,
+                'obs':obs
+            }
+            data.append(add)
     print('Dados carregados')
 
 def alinea_a(dados):
@@ -30,7 +35,7 @@ def alinea_a(dados):
     regdata = re.compile(expdata)
     res = {}
     for d in dados:
-        data = d[1]
+        data = d['data']
         resmatch = regdata.match(data)
         ano = resmatch.group(1)
         if not res.__contains__(ano):
@@ -60,15 +65,15 @@ def alinea_b(dados):
     regnomes = re.compile(expnomes)
     res = {}
     for d in dados:
-        nomes = d[2]
-        data = d[1]
+        nomes = [ d['nome'], d['pai'], d['mae'] ]
+        data = d['data']
         resmatchdata = regdata.match(data)
         ano = resmatchdata.group(1)
         seculo = int(int(ano) / 100) + 1
         if not res.__contains__(seculo):
             res[seculo] = {'NP' : {}, 'NA' : {}}
         for nome in nomes:
-            resmatch = regnomes.match(nome[0])
+            resmatch = regnomes.match(nome)
             if resmatch:
                 np = resmatch.group(1)
                 na = resmatch.group(2)
@@ -91,14 +96,15 @@ def alinea_b(dados):
 
 def alinea_c(dados):
     res = {}
+    exp = r'[A-Za-z\s]*,([A-Za-z\s]*)\.[\s]*Proc\.[\d]+\.'
+    reexp = re.compile(exp)
     for d in dados:
-        nomes = d[2]
-        for nome in nomes:
-            p = nome[1]
-            if len(p) > 0:
-                if not res.__contains__(p):
-                    res[p] = 0
-                res[p] += 1
+        obs = d['obs']
+        resexp = reexp.findall(obs)
+        for g in resexp:
+            if not res.__contains__(g):
+                res[g] = 0
+            res[g]+=1
     resl = []
     for grau in res.keys():
         resl.append((grau,res[grau]))
@@ -109,22 +115,7 @@ def alinea_c(dados):
 
 def alinea_d(dados, nomeficheiro):
     print(f'A guardar no ficheiro {nomeficheiro}')
-    p20 = dados[:20]
-    res = []
-    for t in p20:
-        l = []
-        conversion = {
-            'id' : t[0],
-            'data' : t[1],
-            'nomes' : l
-        }
-        for n in t[2]:
-            l.append({
-                'nome': n[0],
-                'grau parentesco' : n[1],
-                'processo' : n[2]
-            })
-        res.append(conversion)
+    res = dados[:20]
     file = open(nomeficheiro,'w')
     json.dump(res,file,indent=4)
     file.close()
