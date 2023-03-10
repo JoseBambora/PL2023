@@ -11,16 +11,36 @@ def processa_header(header):
     exp = r"(\w+)({\d+,?\d*})?(::\w+)?"
     regex = re.compile(exp)
     componentes = regex.findall(header)
+    b = True
     for tuple in componentes:
         t1 = tuple[0]
         t2 = tuple[1][1:][:-1].split(',')
         t3 = tuple[2][2:]
         if(t2[0] == '' and len(t3) == 0):
             t2 = []
+        elif(t2[0] != ''):
+            t2[0] = int(t2[0])
+            if(len(t2) > 1):
+                t2[1] = int(t2[1])
         l = [t1,t2,t3]
         l = list(filter(lambda str: len(str) > 0,l))
         res.append(l)
     return res
+
+def get_numero_virgulas(header):
+    num = 0
+    for e in header:
+        if len(e) > 1:
+            l = e[1]
+            if(isinstance(l[0],int)):
+                if(len(l) > 1):
+                    num += l[1]
+                else:
+                    num += l[0]
+        else: 
+            num += 1
+    return num
+
 
 # Processa partes de {número,número} ou {número}
 def process_max_min(hcom,componentes,k):
@@ -30,9 +50,9 @@ def process_max_min(hcom,componentes,k):
     lim = hcom[1]
     llim = len(lim)
     if(llim > 0):
-        minvalue = int(lim[0])
+        minvalue = lim[0]
     if(llim > 1):
-        maxvalue = int(lim[1])
+        maxvalue = lim[1]
     w = 0
     lc = len(componentes)
     while k < lc and (w < minvalue or (w >= minvalue and w < maxvalue)):
@@ -72,29 +92,32 @@ def processa_elem(aux,hcom,componentes,k):
     return k
 
 # Processa uma linha
-def processa_line(line,header):
+def processa_line(line,header,numcampos):
     aux = {}
     lh = len(header)
     exp = r","
     reg = re.compile(exp)
     componentes = reg.split(line)
-    if(len(componentes[-1]) < 1):
-        componentes = componentes[:-1]
-    elif(componentes[-1][-1] == '\n'):
-        componentes[-1] = componentes[-1][:-1]
-    k = 0
-    for j in range(0,lh):
-        hcom = header[j]
-        k = processa_elem(aux,hcom,componentes,k)
+    if numcampos != len(componentes):
+        print(f'Linha inválida: {line}')
+    else:
+        if(len(componentes[-1]) < 1):
+            componentes = componentes[:-1]
+        elif(componentes[-1][-1] == '\n'):
+            componentes[-1] = componentes[-1][:-1]
+        k = 0
+        for j in range(0,lh):
+            hcom = header[j]
+            k = processa_elem(aux,hcom,componentes,k)
     return aux
 
 # Processa todas as linhas
-def processa_lines(header,lines):
+def processa_lines(header,lines,numcampos):
     res = []
     ll = len(lines)
     for i in range(1,ll):
         line = lines[i]
-        aux = processa_line(line,header)
+        aux = processa_line(line,header,numcampos)
         res.append(aux)
     return res
 
@@ -130,7 +153,8 @@ def load_info(file):
 def processa_csv(file):
     lines = load_info("csv/" + file + '.csv')
     header = processa_header(lines[0])
-    res = processa_lines(header,lines)
+    num = get_numero_virgulas(header)
+    res = processa_lines(header,lines,num)
     save_info("json/" + file + '.json', res)
 
 def testes():
