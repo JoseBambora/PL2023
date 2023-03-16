@@ -102,20 +102,17 @@ def t_CHAMADA_CHAMADA(t):
     r'T\s*=\s*(\d+)'
     global saldo
     num = regnum.search(t.value).group(1)
-    b = True
-    for n in numeros:
-        r = re.match(n[0],num)
-        if r:
-            if n[1] == -1:
-                print('Esse número não é permitido neste telefone. Queira discar novo número!')
-            elif saldo >= n[1]:
-                saldo -= n[1]
-                print(getSaldo(saldo))
-            else:
-                print('Saldo insuficiente')
-            b = False
-            break
-    if b:
+    aux = list(filter(lambda e: re.match(e[0],num),numeros))
+    if len(aux) == 1:
+        reduz = aux[0][1]
+        if reduz == -1:
+            print('Esse número não é permitido neste telefone. Queira discar novo número!')
+        elif saldo < reduz:
+            print('Saldo insuficiente')
+        else:
+            saldo -= reduz
+            print(getSaldo(saldo))
+    else:
         print('Número desconhecido!')
     return t
 
@@ -138,9 +135,9 @@ def calcula_troco():
             m = coinlist[i]
             i+=1
     p = 'troco='
+    coinlist = filter(lambda k: contador[k] > 0,coinlist)
     for k in coinlist:
-        if contador[k] > 0:
-            p+= ' ' + str(contador[k]) + 'x' + k + ','
+        p+= ' ' + str(contador[k]) + 'x' + k + ','
     p = p[:-1]
     return p
 
