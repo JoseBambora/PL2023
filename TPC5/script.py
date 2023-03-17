@@ -168,14 +168,14 @@ def t_CHAMADA_ANY(t):
 def t_error(t):
     t.lexer.skip(1)
 
-def t_newline(t):
+def t_ANY_newline(t):
     r'\n+'
-    t.lexer.lineno += len(t.value)
+    return t
 
 lexer = lex()
 
 for s in sys.stdin:
-    lexer.input(s.rstrip())
+    lexer.input(s)
     t = lexer.token()
     while(t):
         t = lexer.token()
