@@ -62,6 +62,8 @@ t_ignore  = ' \t'
 
 def t_ANY_ABORTAR(t):
     r'ABORTAR'
+    print(calcula_troco())
+    print('A desligar máquina')
     sys.exit()
 
 def getSaldo(saldo):
