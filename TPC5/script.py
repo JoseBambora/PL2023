@@ -38,7 +38,8 @@ tokens = [
     'POUSAR',
     'CHAMADA',
     'LEVANTAR',
-    'MOEDA'
+    'MOEDA',
+    'ABORTAR'
 ]
 
 # 3 Grupos, o inicial, o de inserir as moedas e o de efetuar chamadas
@@ -58,6 +59,10 @@ states = (
 #                                 \___|
 
 t_ignore  = ' \t'
+
+def t_ANY_ABORTAR(t):
+    r'ABORTAR'
+    sys.exit()
 
 def getSaldo(saldo):
     s = str(saldo)
